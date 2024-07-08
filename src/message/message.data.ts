@@ -42,7 +42,6 @@ export class MessageData {
     return chatMessageToObject(message);
   }
 
-
   async getChatConversationMessages(
     data: GetMessageDto,
   ): Promise<PaginatedChatMessages> {
@@ -89,7 +88,9 @@ export class MessageData {
 
   async delete(messageId: ObjectID): Promise<ChatMessage> {
     // TODO allow a message to be marked as deleted
-    return new ChatMessage() // Minimum to pass ts checks -replace this
+    const deletedChatMessage = new this.chatMessageModel();
+    deletedChatMessage.deleted = true;
+    return deletedChatMessage;
   }
 
   async resolve(messageId: ObjectID): Promise<ChatMessage> {

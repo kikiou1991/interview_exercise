@@ -94,6 +94,7 @@ export interface IConversationLogic {
     lastMessageInput: LastMessageInput,
   ): Promise<LastMessageOutput[]>;
   updateTags(conversationId: string, tags: Tag[]): Promise<ConversationDTO>;
+  //Here we need to a function filter by tags it should return the messages with the given filter
   getMessagesByConversation(
     messagesFilterInput: MessagesFilterInput,
   ): Promise<MessageGroupedByConversationOutput[]>;
@@ -280,7 +281,6 @@ export class ConversationLogic implements IConversationLogic {
   async createDirectChatConversation(
     directChatConversationDto: DirectChatConversationDto,
   ): Promise<ConversationDTO> {
-
     const memberIds = [
       directChatConversationDto.userToConverseWith,
       directChatConversationDto.currentUserId,

@@ -27,7 +27,8 @@ export class UserService implements IUserService {
   }
 
   requestFunction = async (key: string): Promise<any> => {
-    const requestUrl = `${this.baseUrl}/api/v1/users/${key}`;
+    const url = this.baseUrl.trim();
+    const requestUrl = `${url}/api/v1/users/${key}`;
     const response = await fetch(requestUrl, {
       method: 'GET',
       headers: {
