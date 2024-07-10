@@ -94,11 +94,9 @@ describe('MessageData', () => {
         { conversationId, text: 'Hello world' },
         senderId,
       );
-      console.log(sentMessage);
       const gotMessage = await messageData.getMessage(
         sentMessage.id.toHexString(),
       );
-      console.log(gotMessage);
       expect(gotMessage).toMatchObject(sentMessage);
     });
   });
@@ -116,8 +114,66 @@ describe('MessageData', () => {
       // And that is it now deleted
       const deletedMessage = await messageData.delete(message.id);
       expect(deletedMessage).toBeTruthy();
-      console.log(deletedMessage);
       expect(deletedMessage.deleted).toBe(true);
+    });
+  });
+  //Add a new test block for tags
+  describe('tags', () => {
+    describe('addTag', () => {
+      it('should successfully create a message with a tag', async () => {
+        const tagObj = {
+          _id: new ObjectID(),
+          tag: 'General Grevious',
+        };
+        const conversationId = new ObjectID();
+        //During creation we can set the tag if we so wish
+        const newMessage = await messageData.create(
+          {
+            conversationId,
+            text: 'cough cough',
+            tags: [tagObj],
+          },
+          sender3Id,
+        );
+        expect(newMessage.tags).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              _id: tagObj._id,
+              tag: tagObj.tag,
+            }),
+          ]),
+        );
+      });
+      it('successfully adds a tag to a message', async () => {
+        const conversationId = new ObjectID();
+        const tagObj = {
+          _id: new ObjectID(),
+          tag: 'General Kenobi',
+        };
+        //create a new message we can add tags to
+        const newMessage = await messageData.create(
+          { conversationId, text: 'Hello There', tags: [tagObj] },
+          sender2Id,
+        );
+        const tagObj2 = {
+          _id: new ObjectID(),
+          tag: 'Highground',
+        };
+        const taggedNewMsg = await messageData.addTag(
+          tagObj2,
+          sender2Id,
+          newMessage.id,
+        );
+        console.log(taggedNewMsg);
+        expect(taggedNewMsg.tags).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              _id: tagObj2._id,
+              tag: tagObj2.tag,
+            }),
+          ]),
+        );
+      });
     });
   });
 });

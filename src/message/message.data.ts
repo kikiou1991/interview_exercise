@@ -11,6 +11,7 @@ import { MessageDto, GetMessageDto } from './models/message.dto';
 import { ObjectID } from 'mongodb';
 import { createRichContent } from './utils/message.helper';
 import { MessageGroupedByConversationOutput } from '../conversation/models/messagesFilterInput';
+import { Tag } from './models/message.model';
 
 @Injectable()
 export class MessageData {
@@ -29,6 +30,9 @@ export class MessageData {
     chatMessage.conversationId = data.conversationId;
     chatMessage.created = new Date();
     chatMessage.deleted = false;
+    //add an option to be able to create a new message with a tag
+    //Added tags field @MessageDto as well to prevent errors
+    chatMessage.tags = data.tags;
 
     createRichContent(data, chatMessage);
 
@@ -91,6 +95,30 @@ export class MessageData {
     const deletedChatMessage = new this.chatMessageModel();
     deletedChatMessage.deleted = true;
     return deletedChatMessage;
+  }
+  //here we add the new addTag function
+  // 1st make it pass the test with bare minimum code
+  // 2nd make sure all mode and entity files are modified as needed
+  // 3rd implement full function
+  async addTag(
+    tag: Tag,
+    userId: ObjectID,
+    messageId: ObjectID,
+  ): Promise<ChatMessage> {
+    const query = { _id: messageId };
+    const updatedDocument = {
+      $addToSet: { tags: tag },
+    };
+    const addTag = await this.chatMessageModel.findOneAndUpdate(
+      query,
+      updatedDocument,
+      {
+        new: true,
+        returnOriginal: false,
+      },
+    );
+    if (!addTag) throw new Error('Failed to add tag to the message');
+    return chatMessageToObject(addTag);
   }
 
   async resolve(messageId: ObjectID): Promise<ChatMessage> {

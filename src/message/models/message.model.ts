@@ -5,6 +5,12 @@ import { AttachmentType, GifType } from './message.dto';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @Schema()
+@ObjectType()
+export class Tag {
+  _id: ObjectID;
+  tag: string;
+}
+@Schema()
 export class ReplyMessage {
   @Prop()
   id: ObjectID;
@@ -153,7 +159,18 @@ export class ChatMessageModel {
     nullable: true,
   })
   reactions?: Reaction[];
+  //include the tags as an optionprop inside the ChatMessageModel
+  @Prop({
+    type: [{ _id: ObjectID, tag: String }],
+    nullable: true,
+  })
+  tags?: Tag[];
 
+  @Prop({
+    required: false,
+    default: true,
+  })
+  isStrongWithTheForce?: boolean;
   /**
    * All the properties below are virtual properties
    * @url https://mongoosejs.com/docs/tutorials/virtuals.html

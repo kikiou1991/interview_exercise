@@ -3,7 +3,7 @@ import { ObjectID } from 'mongodb';
 import { UserField, MessageSender } from '../../user/models/user.model';
 import { ChatConversation } from '../../conversation/models/ChatConversation.entity';
 import { AttachmentType, GifType } from './message.dto';
-import { Reaction } from './message.model';
+import { Reaction, Tag } from './message.model';
 
 class ReplyMessageSocket {
   text?: string;
@@ -148,6 +148,12 @@ export class ChatMessage {
 
   @Field({ defaultValue: false, nullable: true })
   isSenderBlocked?: boolean;
+  //We also need to add a new field for tags, and make it optional
+  @Field(() => [Tag], { nullable: true })
+  tags?: Tag[];
+
+  @Field({ defaultValue: true })
+  isStrongWithTheFoce?: boolean;
 }
 
 /***
@@ -176,6 +182,11 @@ export class SocketChatMessage {
   reactions?: Reaction[];
 
   isSenderBlocked?: boolean;
+
+  //must be included here as well
+  tags?: Tag[];
+
+  isStrongWithTheFoce?: boolean;
 }
 
 @ObjectType()

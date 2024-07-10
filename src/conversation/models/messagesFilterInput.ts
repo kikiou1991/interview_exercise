@@ -7,7 +7,7 @@ export type MessageGroupedByConversationOutput = {
   conversationId: string;
 };
 
-// Need to add an extra ApiProperty for filteringh by Tags
+// Need to add an extra ApiProperty for filteringh by Tags??
 
 export class MessagesFilterInput {
   @ApiProperty({

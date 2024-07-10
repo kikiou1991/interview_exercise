@@ -1,11 +1,6 @@
-import {
-  Field,
-  Float,
-  InputType,
-  ObjectType,
-  registerEnumType,
-} from '@nestjs/graphql';
+import { Field, Float, InputType, registerEnumType } from '@nestjs/graphql';
 import { ObjectID } from 'mongodb';
+import { Tag } from './message.model';
 
 export enum GifType {
   Gif = 'gif',
@@ -107,6 +102,14 @@ export class RichContentDto {
   @Field(() => PollDto, { nullable: true })
   poll?: PollDto;
 }
+@InputType()
+export class TagDto {
+  @Field()
+  id: ObjectID;
+
+  @Field()
+  tag: string;
+}
 
 @InputType()
 export class MessageDto {
@@ -118,6 +121,9 @@ export class MessageDto {
 
   @Field(() => RichContentDto, { nullable: true })
   richContent?: RichContentDto;
+
+  @Field(() => TagDto, { nullable: true })
+  tags?: Tag[];
 }
 
 // TODO Min - Max on limit
