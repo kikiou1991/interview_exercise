@@ -164,7 +164,6 @@ describe('MessageData', () => {
           sender2Id,
           newMessage.id,
         );
-        console.log(taggedNewMsg);
         expect(taggedNewMsg.tags).toEqual(
           expect.arrayContaining([
             expect.objectContaining({
@@ -173,6 +172,46 @@ describe('MessageData', () => {
             }),
           ]),
         );
+      });
+    });
+    describe('findTaggedMessages', () => {
+      it('the called function exists', () => {
+        expect(messageData.findTaggedMessages).toBeDefined();
+      });
+      it('succesfully finds all messages with the relevant tag', async () => {
+        const conversationId = new ObjectID();
+        const tagObj = {
+          _id: new ObjectID(),
+          tag: 'Star Wars',
+        };
+        const tagObj2 = {
+          _id: new ObjectID(),
+          tag: 'Obi-Ani Fight',
+        };
+        const message = await messageData.create(
+          {
+            conversationId,
+            text: 'I have the high ground',
+            tags: [tagObj],
+          },
+          senderId,
+        );
+        const message2 = await messageData.create(
+          {
+            conversationId,
+            text: 'You underestimate by power Obi-Wan',
+            tags: [tagObj],
+          },
+          sender2Id,
+        );
+        //add another tag
+        await messageData.addTag(tagObj2, senderId, message.id);
+        await messageData.addTag(tagObj2, sender2Id, message2.id);
+        const messages = await messageData.findTaggedMessages([
+          'Star Wars',
+          'Obi-Ani Fight',
+        ]);
+        expect(messages).toHaveLength(2);
       });
     });
   });

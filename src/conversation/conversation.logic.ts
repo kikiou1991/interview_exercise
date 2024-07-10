@@ -94,7 +94,6 @@ export interface IConversationLogic {
     lastMessageInput: LastMessageInput,
   ): Promise<LastMessageOutput[]>;
   updateTags(conversationId: string, tags: Tag[]): Promise<ConversationDTO>;
-  //Here we need to a function filter by tags it should return the messages with the given filter
   getMessagesByConversation(
     messagesFilterInput: MessagesFilterInput,
   ): Promise<MessageGroupedByConversationOutput[]>;

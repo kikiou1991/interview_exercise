@@ -121,6 +121,17 @@ export class MessageData {
     return chatMessageToObject(addTag);
   }
 
+  //Same as before create the findTaggedMessages functuion
+  //Make the test pass with minimum input
+  //Then implement full functionality
+
+  async findTaggedMessages(tags: string[]): Promise<ChatMessage[]> {
+    const messages = await this.chatMessageModel.find({
+      'tags.tag': { $in: tags },
+    });
+    return messages.map(chatMessageToObject);
+  }
+
   async resolve(messageId: ObjectID): Promise<ChatMessage> {
     const filterBy = { _id: messageId };
     const updateProperty = { resolved: true };
