@@ -214,5 +214,44 @@ describe('MessageData', () => {
         expect(messages).toHaveLength(2);
       });
     });
+
+    describe('updateTags', () => {
+      it('successfully calls the function', () => {
+        expect(messageData.updateTags).toBeDefined();
+      });
+      it('successfully updates the tags on a message', async () => {
+        const initialTag = {
+          _id: new ObjectID(),
+          tag: 'Emperor',
+        };
+        const message = await messageData.create(
+          {
+            conversationId,
+            text: 'Brought balance',
+            tags: [initialTag],
+          },
+          sender3Id,
+        );
+        const newTags = [
+          {
+            _id: new ObjectID(),
+            tag: 'Old',
+          },
+          {
+            _id: new ObjectID(),
+            tag: 'Sith',
+          },
+        ];
+
+        const updatedMsg = await messageData.updateTags(newTags, message.id);
+        console.log(updatedMsg);
+        expect(updatedMsg.tags).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({ tag: 'Old' }),
+            expect.objectContaining({ tag: 'Sith' }),
+          ]),
+        );
+      });
+    });
   });
 });

@@ -132,6 +132,16 @@ export class MessageData {
     return messages.map(chatMessageToObject);
   }
 
+  async updateTags(tags: Tag[], messageId: ObjectID): Promise<ChatMessage> {
+    const updatedMsg = await this.chatMessageModel
+      .findByIdAndUpdate(messageId, { tags: tags }, { new: true })
+      .exec();
+    if (!updatedMsg) {
+      throw new Error('Message not found');
+    }
+    return chatMessageToObject(updatedMsg);
+  }
+
   async resolve(messageId: ObjectID): Promise<ChatMessage> {
     const filterBy = { _id: messageId };
     const updateProperty = { resolved: true };
