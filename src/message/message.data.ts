@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import {
@@ -92,9 +92,14 @@ export class MessageData {
 
   async delete(messageId: ObjectID): Promise<ChatMessage> {
     // TODO allow a message to be marked as deleted
-    const deletedChatMessage = new this.chatMessageModel();
-    deletedChatMessage.deleted = true;
-    return deletedChatMessage;
+    const deletedChatMessage = await this.chatMessageModel
+      .findByIdAndUpdate(messageId, { deleted: true }, { new: true })
+      .exec();
+
+    if (!deletedChatMessage) {
+      throw new NotFoundException('Message not found');
+    }
+    return chatMessageToObject(deletedChatMessage);
   }
   //here we add the new addTag function
   // 1st make it pass the test with bare minimum code

@@ -244,7 +244,6 @@ describe('MessageData', () => {
         ];
 
         const updatedMsg = await messageData.updateTags(newTags, message.id);
-        console.log(updatedMsg);
         expect(updatedMsg.tags).toEqual(
           expect.arrayContaining([
             expect.objectContaining({ tag: 'Old' }),
