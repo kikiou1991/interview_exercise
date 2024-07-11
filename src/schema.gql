@@ -164,7 +164,7 @@ type Mutation {
   likeConversationMessage(likeMessageDto: LikeMessageDto!): ChatMessage!
   unlikeConversationMessage(likeMessageDto: LikeMessageDto!): ChatMessage!
   addTag(message: ObjectId!, tags: TagDto!): ChatMessage!
-  updateTags(message: ObjectId!, tags: TagDto!): ChatMessage!
+  updateTags(message: ObjectId!, tags: TagArrayDto!): ChatMessage!
   addReactionToMessage(reactionDto: ReactionDto!): ChatMessage!
   removeReactionFromMessage(reactionDto: ReactionDto!): ChatMessage!
   addVote(option: String!, chatMessageId: ObjectId!): Poll!
@@ -189,6 +189,7 @@ input unpinMessageDTO {
 input MessageDto {
   text: String!
   conversationId: ObjectId!
+  messageId: ObjectId!
   richContent: RichContentDto
   tags: [TagDto!]
 }
@@ -254,6 +255,10 @@ input LikeMessageDto {
   userId: ObjectId!
   messageId: ObjectId!
   conversationId: ObjectId!
+}
+
+input TagArrayDto {
+  tags: [TagDto!]!
 }
 
 input ReactionDto {

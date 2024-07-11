@@ -110,7 +110,27 @@ export class TagDto {
   @Field()
   tag: string;
 }
+@InputType()
+export class TagArrayDto {
+  @Field(() => [TagDto])
+  tags: TagDto[];
+}
+export class TaggedMsgDto {
+  @Field()
+  text?: string;
 
+  @Field()
+  conversationId: ObjectID;
+
+  @Field()
+  messageId: ObjectID;
+
+  @Field()
+  userId: ObjectID;
+
+  @Field(() => [TagDto], { nullable: true })
+  tags?: Tag[];
+}
 @InputType()
 export class MessageDto {
   @Field()
@@ -118,6 +138,9 @@ export class MessageDto {
 
   @Field()
   conversationId: ObjectID;
+
+  @Field()
+  messageId?: ObjectID;
 
   @Field(() => RichContentDto, { nullable: true })
   richContent?: RichContentDto;

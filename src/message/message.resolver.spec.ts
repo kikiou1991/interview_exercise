@@ -1,3 +1,4 @@
+import { authenticate } from 'passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   MessageResolver,
@@ -12,6 +13,9 @@ import {
   LikeMessageDto,
   ReactionDto,
   PollDto,
+  TagDto,
+  TaggedMsgDto,
+  TagArrayDto,
 } from './models/message.dto';
 import { ObjectID } from 'mongodb';
 import { IAuthenticatedUser } from '../authentication/jwt.strategy';
@@ -25,6 +29,7 @@ import {
   MessagesFilterInput,
   MessageGroupedByConversationOutput,
 } from '../conversation/models/messagesFilterInput';
+import { Tag } from './models/message.model';
 
 const conversationId = new ObjectID('5fe0cce861c8ea54018385af');
 const messageId = new ObjectID('5fe0cce861c8ea54018386ab');
@@ -194,6 +199,22 @@ describe('MessageResolver', () => {
       messagesFilterInput: MessagesFilterInput,
     ): Promise<MessageGroupedByConversationOutput[]> {
       return Promise.resolve([]);
+    }
+
+    addTag(
+      tags: TagDto,
+      messageId: ObjectID,
+      authenticatedUser: IAuthenticatedUser,
+    ): Promise<ChatMessage> {
+      return Promise.resolve(chatMessage);
+    }
+
+    updateTags(
+      tags: TagDto[],
+      messageId: ObjectID,
+      authenticatedUser: IAuthenticatedUser,
+    ): Promise<ChatMessage> {
+      return Promise.resolve(chatMessage);
     }
   }
 
@@ -454,6 +475,72 @@ describe('MessageResolver', () => {
           userId,
         },
         { accountRole: 'admin', userId },
+      );
+    });
+  });
+
+  describe('add tag to a message', () => {
+    it('successfully adds a tag to a message', () => {
+      jest.spyOn(messageLogic, 'addTag');
+      const message: TaggedMsgDto = {
+        messageId,
+        conversationId,
+        userId,
+      };
+      const tag: Tag = {
+        _id: new ObjectID(),
+        tag: 'Jar-Jar Binks',
+      };
+      resolver.addTag(tag, message.messageId, authenticatedUser);
+      expect(messageLogic.addTag).toBeCalledWith(
+        tag,
+        message.messageId,
+        authenticatedUser,
+      );
+    });
+  });
+
+  describe('updates the tags on a message', () => {
+    it('successfully updates the tags on the message', async () => {
+      jest.spyOn(messageLogic, 'updateTags');
+      const tags: TagDto[] = [
+        {
+          _id: new ObjectID(),
+          tag: 'Yoda',
+        },
+        {
+          _id: new ObjectID(),
+          tag: 'Padme',
+        },
+      ];
+      const message = {
+        messageId,
+        conversationId,
+        userId,
+        tags,
+      };
+      const newTags: TagDto[] = [
+        {
+          _id: new ObjectID(),
+          tag: 'Mace',
+        },
+        {
+          _id: new ObjectID(),
+          tag: 'Plokoon',
+        },
+      ];
+      const tagArrayDto: TagArrayDto = { tags: newTags };
+
+      await resolver.updateTags(
+        tagArrayDto,
+        message.messageId,
+        authenticatedUser,
+      );
+
+      expect(messageLogic.updateTags).toHaveBeenCalledWith(
+        tagArrayDto.tags,
+        message.messageId,
+        authenticatedUser,
       );
     });
   });

@@ -15,6 +15,7 @@ import {
   ReactionDto,
   PollOptionDto,
   TagDto,
+  TagArrayDto,
 } from './models/message.dto';
 import { MessageData } from './message.data';
 import { IAuthenticatedUser } from '../authentication/jwt.strategy';
@@ -510,7 +511,7 @@ export class MessageLogic implements IMessageLogic {
   }
 
   async updateTags(
-    tags: Tag[],
+    tags: TagDto[],
     messageId: ObjectID,
     authenticatedUser: IAuthenticatedUser,
   ) {
