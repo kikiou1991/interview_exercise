@@ -7,7 +7,7 @@ import {
   Parent,
   ResolveReference,
 } from '@nestjs/graphql';
-import { ObjectId } from 'mongodb';
+import { ObjectID, ObjectId } from 'mongodb';
 import {
   ChatMessage,
   PaginatedChatMessages,
@@ -21,6 +21,7 @@ import {
   LikeMessageDto,
   ResolveMessageDto,
   ReactionDto,
+  TagDto,
 } from './models/message.dto';
 import { MessageLogic } from './message.logic';
 import {
@@ -34,6 +35,8 @@ import {
 } from '../authentication/jwt.strategy';
 import { SafeguardingService } from '../safeguarding/safeguarding.service';
 import { ChatMessageDataLoader } from './message.dataloader';
+import { authenticate } from 'passport';
+import { Tag } from './models/message.model';
 
 type ChatMessageReference = { __typename: string; id: ObjectId };
 
@@ -139,6 +142,31 @@ export class MessageResolver {
     @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
   ): Promise<ChatMessage> {
     return await this.messageLogic.unlike(likeMessageDto, authenticatedUser);
+  }
+
+  //Add a Mutation for the new tag functions
+  @Mutation(() => ChatMessage)
+  @UseGuards(GqlAuthGuard)
+  async addTag(
+    @Args('tags') tags: TagDto,
+    @Args('message') messageId: ObjectID,
+    @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
+  ): Promise<ChatMessage> {
+    return await this.messageLogic.addTag(tags, messageId, authenticatedUser);
+  }
+
+  @Mutation(() => ChatMessage)
+  @UseGuards(GqlAuthGuard)
+  async updateTags(
+    @Args('tags') tags: TagDto,
+    @Args('message') messageId: ObjectID,
+    @AuthenticatedUser() authenticatedUser: IAuthenticatedUser,
+  ): Promise<ChatMessage> {
+    return await this.messageLogic.updateTags(
+      [tags],
+      messageId,
+      authenticatedUser,
+    );
   }
 
   @Mutation(() => ChatMessage)

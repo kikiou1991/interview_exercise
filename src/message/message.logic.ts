@@ -1,3 +1,4 @@
+import { authenticate } from 'passport';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import {
   ChatMessage,
@@ -13,6 +14,7 @@ import {
   ResolveMessageDto,
   ReactionDto,
   PollOptionDto,
+  TagDto,
 } from './models/message.dto';
 import { MessageData } from './message.data';
 import { IAuthenticatedUser } from '../authentication/jwt.strategy';
@@ -42,7 +44,7 @@ import {
   ContextType,
 } from '../conversation/models/ContextSchema.dto';
 import { extractUniversityIdsFromContext } from '../conversation/extractUniversityIdsFromContext';
-import { ChatMessageModel } from './models/message.model';
+import { ChatMessageModel, Tag } from './models/message.model';
 import {
   MessageGroupedByConversationOutput,
   MessagesFilterInput,
@@ -278,7 +280,6 @@ export class MessageLogic implements IMessageLogic {
     return blockedUsers.map((user) => user.blockedUserId);
   }
 
-
   async getChatConversationMessages(
     getMessageDto: GetMessageDto,
     authenticatedUser: IAuthenticatedUser,
@@ -313,7 +314,6 @@ export class MessageLogic implements IMessageLogic {
       paginatedChatMessages,
       blockedUserIds,
     );
-  
 
     return paginatedChatMessages;
   }
@@ -489,6 +489,37 @@ export class MessageLogic implements IMessageLogic {
       likeMessageDto.conversationId.toHexString(),
     );
 
+    return message;
+  }
+  async addTag(
+    tag: Tag,
+    messageId: ObjectID,
+    authenticatedUser: IAuthenticatedUser,
+  ) {
+    await this.throwForbiddenErrorIfNotAuthorized(
+      authenticatedUser,
+      tag._id,
+      Action.readConversation,
+    );
+    const message = await this.messageData.addTag(
+      tag,
+      authenticatedUser.userId,
+      messageId,
+    );
+    return message;
+  }
+
+  async updateTags(
+    tags: Tag[],
+    messageId: ObjectID,
+    authenticatedUser: IAuthenticatedUser,
+  ) {
+    await this.throwForbiddenErrorIfNotAuthorized(
+      authenticatedUser,
+      messageId,
+      Action.readConversation,
+    );
+    const message = await this.messageData.updateTags(tags, messageId);
     return message;
   }
 

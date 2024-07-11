@@ -163,6 +163,8 @@ type Mutation {
   unresolveConversationMessage(resolveMessageDto: ResolveMessageDto!): ChatMessage!
   likeConversationMessage(likeMessageDto: LikeMessageDto!): ChatMessage!
   unlikeConversationMessage(likeMessageDto: LikeMessageDto!): ChatMessage!
+  addTag(message: ObjectId!, tags: TagDto!): ChatMessage!
+  updateTags(message: ObjectId!, tags: TagDto!): ChatMessage!
   addReactionToMessage(reactionDto: ReactionDto!): ChatMessage!
   removeReactionFromMessage(reactionDto: ReactionDto!): ChatMessage!
   addVote(option: String!, chatMessageId: ObjectId!): Poll!
@@ -188,7 +190,7 @@ input MessageDto {
   text: String!
   conversationId: ObjectId!
   richContent: RichContentDto
-  tags: TagDto
+  tags: [TagDto!]
 }
 
 input RichContentDto {
@@ -234,7 +236,7 @@ input PollOptionDto {
 }
 
 input TagDto {
-  id: ObjectId!
+  _id: ID!
   tag: String!
 }
 

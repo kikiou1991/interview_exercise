@@ -1,4 +1,4 @@
-import { Field, Float, InputType, registerEnumType } from '@nestjs/graphql';
+import { Field, Float, ID, InputType, registerEnumType } from '@nestjs/graphql';
 import { ObjectID } from 'mongodb';
 import { Tag } from './message.model';
 
@@ -104,8 +104,8 @@ export class RichContentDto {
 }
 @InputType()
 export class TagDto {
-  @Field()
-  id: ObjectID;
+  @Field(() => ID)
+  _id: ObjectID;
 
   @Field()
   tag: string;
@@ -122,7 +122,7 @@ export class MessageDto {
   @Field(() => RichContentDto, { nullable: true })
   richContent?: RichContentDto;
 
-  @Field(() => TagDto, { nullable: true })
+  @Field(() => [TagDto], { nullable: true })
   tags?: Tag[];
 }
 
